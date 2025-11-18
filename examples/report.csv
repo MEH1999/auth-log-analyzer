@@ -1,0 +1,3 @@
+source_ip,failures,successes,max_burst,targeted_users
+203.0.113.44,40,0,40,admin;deploy;git;oracle;postgres;root;test;ubuntu;user
+203.0.113.88,18,0,17,root

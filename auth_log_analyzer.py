@@ -149,6 +149,27 @@ def write_csv(path, flagged) -> None:
             w.writerow([s.ip, s.failures, s.successes, burst, ";".join(sorted(s.users))])
 
 
+def write_chart(path, flagged, top=10) -> None:
+    """Optional bar chart of the worst offenders (needs matplotlib)."""
+    try:
+        import matplotlib
+        matplotlib.use("Agg")
+        import matplotlib.pyplot as plt
+    except ImportError:
+        print("note: --chart needs matplotlib (pip install matplotlib); skipping.")
+        return
+    top_ips = flagged[:top]
+    ips = [s.ip for s, _ in top_ips][::-1]
+    fails = [s.failures for s, _ in top_ips][::-1]
+    plt.figure(figsize=(8, 4.5))
+    plt.barh(ips, fails, color="#4c74b2")
+    plt.xlabel("Failed attempts")
+    plt.title("Top SSH brute-force sources")
+    plt.tight_layout()
+    plt.savefig(path, dpi=120)
+    plt.close()
+
+
 def main(argv=None) -> int:
     p = argparse.ArgumentParser(description="Detect SSH brute-force in auth logs.")
     p.add_argument("logfile", help="path to auth.log / secure")
@@ -156,6 +177,7 @@ def main(argv=None) -> int:
     p.add_argument("--window", type=int, default=5, help="sliding window minutes (default 5)")
     p.add_argument("--year", type=int, default=datetime.now().year, help="year for timestamps")
     p.add_argument("--csv", help="write flagged sources to CSV")
+    p.add_argument("--chart", help="write a bar chart of top offenders (PNG, needs matplotlib)")
     args = p.parse_args(argv)
 
     try:
@@ -171,6 +193,9 @@ def main(argv=None) -> int:
     if args.csv:
         write_csv(args.csv, flagged)
         print(f" CSV written -> {args.csv}")
+    if args.chart:
+        write_chart(args.chart, flagged)
+        print(f" Chart written -> {args.chart}")
     return 0
 
 

@@ -1,5 +1,8 @@
 # auth-log-analyzer
 
+[![tests](https://github.com/MEH1999/auth-log-analyzer/actions/workflows/tests.yml/badge.svg)](https://github.com/MEH1999/auth-log-analyzer/actions/workflows/tests.yml)
+![python](https://img.shields.io/badge/python-3.9%2B-blue)
+
 A lightweight, dependency-free Python tool that parses Linux authentication logs
 (`/var/log/auth.log`, `secure`) to surface **failed-login activity** and detect
 **SSH brute-force sources** using a sliding-window burst rule.
@@ -28,7 +31,12 @@ short list of IPs worth investigating.
 python auth_log_analyzer.py examples/auth.log
 python auth_log_analyzer.py examples/auth.log --threshold 10 --window 5 --year 2025
 python auth_log_analyzer.py examples/auth.log --csv report.csv
+python auth_log_analyzer.py examples/auth.log --chart top_offenders.png   # optional (needs matplotlib)
 ```
+
+### Top offenders at a glance
+
+![Top SSH brute-force sources](examples/top_offenders.png)
 
 ### Example output
 
